@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AA Flight Label Generator - PC Version</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <title>AA 092C Daily Label Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * {
@@ -23,38 +22,11 @@
     }
     
     .container {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
     }
     
-    .header {
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        margin-bottom: 30px;
-        text-align: center;
-    }
-    
-    h1 {
-        color: #003d7a;
-        font-size: 2.5em;
-        margin-bottom: 15px;
-    }
-    
-    .subtitle {
-        color: #666;
-        font-size: 1.2em;
-        margin-bottom: 10px;
-    }
-    
-    .info {
-        color: #999;
-        font-size: 0.9em;
-        margin-top: 10px;
-    }
-    
-    .upload-section {
+    .card {
         background: white;
         padding: 50px;
         border-radius: 12px;
@@ -62,23 +34,37 @@
         margin-bottom: 30px;
     }
     
-    .date-input-section {
-        background: #f8f9ff;
-        padding: 30px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-        border: 2px solid #0066cc;
+    h1 {
+        color: #003d7a;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        text-align: center;
     }
     
-    .date-input-section h3 {
+    .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.2em;
+        margin-bottom: 40px;
+    }
+    
+    .date-section {
+        background: #f8f9ff;
+        padding: 40px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border: 3px solid #0066cc;
+    }
+    
+    .date-section h2 {
         color: #003d7a;
-        margin-bottom: 20px;
-        font-size: 1.3em;
+        margin-bottom: 25px;
+        font-size: 1.5em;
     }
     
     .date-controls {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: 300px 300px auto;
         gap: 20px;
         align-items: end;
     }
@@ -91,16 +77,16 @@
     .input-group label {
         font-weight: 600;
         color: #333;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         font-size: 1.1em;
     }
     
     .input-group input,
     .input-group select {
-        padding: 12px;
-        font-size: 1.1em;
+        padding: 15px;
+        font-size: 1.2em;
         border: 2px solid #ddd;
-        border-radius: 6px;
+        border-radius: 8px;
         transition: border-color 0.3s;
     }
     
@@ -108,156 +94,98 @@
     .input-group select:focus {
         outline: none;
         border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
     }
     
     .btn-today {
         background: #0066cc;
         color: white;
         border: none;
-        padding: 12px 25px;
-        border-radius: 6px;
+        padding: 15px 30px;
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 1em;
+        font-size: 1.1em;
         font-weight: 600;
         transition: all 0.3s;
+        height: 56px;
     }
     
     .btn-today:hover {
         background: #003d7a;
+        transform: translateY(-2px);
     }
     
     .date-preview {
-        margin-top: 15px;
-        padding: 15px;
+        margin-top: 25px;
+        padding: 20px;
         background: white;
-        border-radius: 6px;
-        border-left: 4px solid #00cc66;
+        border-radius: 8px;
+        border-left: 5px solid #00cc66;
     }
     
     .date-preview-label {
-        font-size: 0.9em;
+        font-size: 1em;
         color: #666;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
     }
     
     .date-preview-value {
-        font-size: 1.3em;
+        font-size: 1.8em;
         font-weight: bold;
         color: #003d7a;
     }
     
-    .upload-area {
-        border: 3px dashed #0066cc;
-        border-radius: 12px;
-        padding: 80px;
-        background: #f8f9ff;
+    .generate-section {
         text-align: center;
-        cursor: pointer;
-        transition: all 0.3s;
+        margin: 40px 0;
     }
     
-    .upload-area:hover {
-        background: #e8f0ff;
-        border-color: #003d7a;
-        transform: translateY(-2px);
-    }
-    
-    .upload-area.drag-over {
-        background: #d0e8ff;
-        border-color: #00cc66;
-    }
-    
-    #fileInput {
-        display: none;
-    }
-    
-    .upload-icon {
-        font-size: 5em;
-        margin-bottom: 20px;
-    }
-    
-    .upload-text {
-        font-size: 1.5em;
-        color: #333;
-        margin-bottom: 15px;
-        font-weight: 500;
-    }
-    
-    .upload-hint {
-        color: #666;
-        font-size: 1.1em;
-    }
-    
-    .btn {
-        background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
+    .btn-generate {
+        background: linear-gradient(135deg, #00cc66 0%, #009944 100%);
         color: white;
         border: none;
-        padding: 18px 45px;
-        font-size: 1.2em;
-        border-radius: 8px;
+        padding: 25px 60px;
+        font-size: 1.4em;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s;
-        margin: 15px;
         font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(0, 204, 102, 0.3);
     }
     
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,102,204,0.4);
+    .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 204, 102, 0.5);
     }
     
-    .btn-success {
-        background: linear-gradient(135deg, #00cc66 0%, #009944 100%);
+    .info-card {
+        background: #e8f0ff;
+        padding: 30px;
+        border-radius: 10px;
+        border-left: 5px solid #0066cc;
     }
     
-    .btn-success:hover {
-        box-shadow: 0 8px 20px rgba(0,204,102,0.4);
+    .info-card h3 {
+        color: #003d7a;
+        margin-bottom: 15px;
     }
     
-    .progress-section {
-        display: none;
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        margin-bottom: 30px;
+    .info-card ul {
+        list-style: none;
+        padding-left: 0;
     }
     
-    .progress-bar {
-        width: 100%;
-        height: 40px;
-        background: #f0f0f0;
-        border-radius: 20px;
-        overflow: hidden;
-        margin: 30px 0;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #00cc66 0%, #009944 100%);
-        width: 0%;
-        transition: width 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
+    .info-card li {
+        padding: 8px 0;
+        color: #333;
         font-size: 1.1em;
     }
     
-    .status-text {
-        text-align: center;
-        font-size: 1.2em;
-        color: #333;
-        margin: 20px 0;
-    }
-    
-    .results-section {
-        display: none;
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    .info-card li:before {
+        content: "✓ ";
+        color: #00cc66;
+        font-weight: bold;
+        margin-right: 10px;
     }
     
     .stats {
@@ -270,73 +198,20 @@
     .stat-card {
         background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
         color: white;
-        padding: 30px;
+        padding: 25px;
         border-radius: 10px;
         text-align: center;
     }
     
     .stat-value {
-        font-size: 3em;
+        font-size: 2.5em;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
     
     .stat-label {
-        font-size: 1em;
+        font-size: 0.9em;
         opacity: 0.9;
-    }
-    
-    .labels-preview {
-        margin-top: 30px;
-        max-height: 600px;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-    
-    .label-item {
-        padding: 20px;
-        border-bottom: 1px solid #f0f0f0;
-        display: grid;
-        grid-template-columns: 60px 1fr 150px;
-        gap: 20px;
-        align-items: center;
-        transition: background 0.2s;
-    }
-    
-    .label-item:hover {
-        background: #f8f9ff;
-    }
-    
-    .label-number {
-        font-weight: bold;
-        color: #0066cc;
-        font-size: 1.2em;
-    }
-    
-    .label-desc {
-        color: #333;
-        font-size: 1.1em;
-    }
-    
-    .label-stowage {
-        background: #0066cc;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-weight: bold;
-        text-align: center;
-        font-size: 1.1em;
-    }
-    
-    .error {
-        background: #ff4444;
-        color: white;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px 0;
-        display: none;
-        font-size: 1.1em;
     }
 </style>
 ```
@@ -344,25 +219,40 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>✈️ American Airlines Flight Catering Label Generator</h1>
-            <p class="subtitle">Automatically generate Zebra ZPL labels from C-Base PDF files</p>
-            <p class="info">2" × 3" Direct Thermal Labels | 203 DPI | ZPL Format</p>
-        </div>
+        <div class="card">
+            <h1>✈️ AA 092C Daily Label Generator</h1>
+            <p class="subtitle">Generate flight catering labels with today's date</p>
 
 ```
-    <div class="upload-section" id="uploadSection">
-        <!-- Date Input Section -->
-        <div class="date-input-section">
-            <h3>📅 Set Label Date</h3>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">54</div>
+                <div class="stat-label">Cart Labels</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2" × 3"</div>
+                <div class="stat-label">Label Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">PHL-ZRH</div>
+                <div class="stat-label">Route</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">788</div>
+                <div class="stat-label">Aircraft</div>
+            </div>
+        </div>
+        
+        <div class="date-section">
+            <h2>📅 Select Flight Date</h2>
             <div class="date-controls">
                 <div class="input-group">
                     <label for="labelDate">Date:</label>
-                    <input type="date" id="labelDate" onchange="updateDatePreview()">
+                    <input type="date" id="labelDate">
                 </div>
                 <div class="input-group">
                     <label for="dateFormat">Format:</label>
-                    <select id="dateFormat" onchange="updateDatePreview()">
+                    <select id="dateFormat">
                         <option value="full">Full Date (January 29, 2026)</option>
                         <option value="short">Short Date (Jan 29, 2026)</option>
                         <option value="numeric">Numeric (01/29/2026)</option>
@@ -371,70 +261,89 @@
                 <button class="btn-today" onclick="setToday()">📅 Use Today</button>
             </div>
             <div class="date-preview">
-                <div class="date-preview-label">Labels will show:</div>
-                <div class="date-preview-value" id="datePreview">January 29, 2026</div>
+                <div class="date-preview-label">Labels will display:</div>
+                <div class="date-preview-value" id="datePreview">-</div>
             </div>
         </div>
         
-        <!-- Upload Section -->
-        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text">Drop C-Base PDF here or click to browse</div>
-            <div class="upload-hint">Supports all C-Base loading list PDFs (788, 777, etc.)</div>
-        </div>
-        <input type="file" id="fileInput" accept=".pdf" onchange="handleFile(event)">
-    </div>
-    
-    <div class="progress-section" id="progressSection">
-        <h2 style="margin-bottom: 20px;">Processing PDF...</h2>
-        <div class="status-text" id="statusText">Reading PDF file...</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill">0%</div>
-        </div>
-    </div>
-    
-    <div class="results-section" id="resultsSection">
-        <h2 style="margin-bottom: 20px;">✅ Labels Generated Successfully!</h2>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="labelCount">0</div>
-                <div class="stat-label">Labels Created</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">2" × 3"</div>
-                <div class="stat-label">Label Size</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="flightNum">AA 092C</div>
-                <div class="stat-label">Flight Number</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="labelDateDisplay">-</div>
-                <div class="stat-label">Label Date</div>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin: 40px 0;">
-            <button class="btn btn-success" onclick="downloadZip()">
-                📦 Download All Labels (ZIP)
-            </button>
-            <button class="btn" onclick="location.reload()">
-                🔄 Process Another PDF
+        <div class="generate-section">
+            <button class="btn-generate" onclick="generateLabels()">
+                🏷️ Generate & Download Labels
             </button>
         </div>
         
-        <h3 style="margin-top: 40px; margin-bottom: 20px;">Generated Labels:</h3>
-        <div class="labels-preview" id="labelsPreview"></div>
+        <div class="info-card">
+            <h3>What You'll Get:</h3>
+            <ul>
+                <li>54 ZPL label files (one per cart)</li>
+                <li>2" × 3" direct thermal format</li>
+                <li>All cart descriptions and stowage positions</li>
+                <li>Flight AA 092C | PHL-ZRH | Boeing 788</li>
+                <li>Ready to print on Zebra printer</li>
+            </ul>
+        </div>
     </div>
-    
-    <div class="error" id="errorMsg"></div>
 </div>
 
 <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    // All 54 carts with descriptions and stowage positions
+    const carts = [
+        { description: "CC-Hot Towels/Baskets/Dressing", stowage: "G1-111" },
+        { description: "CC-Menus/Cart Toppers", stowage: "G1-112 F" },
+        { description: "CC-Tea", stowage: "G1-113 F" },
+        { description: "Premium Supply Drawer x2", stowage: "G1-114 F" },
+        { description: "Plastic Cups x4/Hot Cups x2", stowage: "G1-114 R" },
+        { description: "Service Ready Beverage Cart", stowage: "G1-173" },
+        { description: "Service Ready Beverage Cart", stowage: "G1-174" },
+        { description: "DHD Earbuds", stowage: "G3-301" },
+        { description: "DHD Soda", stowage: "G3-311" },
+        { description: "Empty Carrier", stowage: "G3-321 F" },
+        { description: "Empty Carrier", stowage: "G3-321 R" },
+        { description: "CC Predeparture Champ/OJ", stowage: "G3-371 F" },
+        { description: "CC Water Cart", stowage: "G3-371 R" },
+        { description: "Empty Carrier", stowage: "G4-402" },
+        { description: "Empty Carrier", stowage: "G4-403" },
+        { description: "Empty Carrier", stowage: "G4-404" },
+        { description: "Empty Carrier", stowage: "G4-413" },
+        { description: "Empty Carrier", stowage: "G4-414" },
+        { description: "DHD Plates or EMPTY", stowage: "G4-415" },
+        { description: "DHD Plates or EMPTY", stowage: "G4-423" },
+        { description: "YC-DHD Soda", stowage: "G4-424" },
+        { description: "YC-Specialty Bev x2", stowage: "G4-425" },
+        { description: "CC-Downline Alcohol Cart", stowage: "G4-475" },
+        { description: "Empty Carrier", stowage: "G5-501 F" },
+        { description: "Plastic Cups x6", stowage: "G5-502 F" },
+        { description: "Paper Cup Sleeves x6", stowage: "G5-502 R" },
+        { description: "Plastic Cup Sleeves", stowage: "G5-503 F" },
+        { description: "Paper Cup Sleeves", stowage: "G5-503 R" },
+        { description: "YC-Beverage Support", stowage: "G6-671" },
+        { description: "YC-Downline Alcohol", stowage: "G6-672" },
+        { description: "Plastic Cup Sleeves", stowage: "G7-701" },
+        { description: "YC INTL Supply Drawers A/B", stowage: "G7-702" },
+        { description: "Paper Cup Sleeves", stowage: "G7-703" },
+        { description: "YC Midflight Snack or EMPTY", stowage: "G7-704" },
+        { description: "Empty Carrier", stowage: "G7-711" },
+        { description: "YC Midflight Snack or EMPTY", stowage: "G7-714" },
+        { description: "Empty Carrier", stowage: "G7-721" },
+        { description: "YC-Dairy Garnish", stowage: "G7-724" },
+        { description: "YC-Beverage Support", stowage: "G7-773" },
+        { description: "Meal Components", stowage: "G7-771" },
+        { description: "Meal Components", stowage: "G7-772" },
+        { description: "Cart Toppers/Creamer", stowage: "G8-801" },
+        { description: "YC INTL Supply Drawers A/B", stowage: "G8-802" },
+        { description: "Paper Cup Sleeves", stowage: "G8-803" },
+        { description: "Plastic Cup Sleeves", stowage: "G8-804" },
+        { description: "Empty Carrier", stowage: "G8-811" },
+        { description: "Empty Carrier", stowage: "G8-814" },
+        { description: "Empty Carrier", stowage: "G8-821" },
+        { description: "Empty Carrier", stowage: "G8-824" },
+        { description: "Empty Cart Atlas", stowage: "G8-871" },
+        { description: "Empty Cart Atlas", stowage: "G8-872" },
+        { description: "YC-Beverage Support", stowage: "G8-873" },
+        { description: "Meal Components", stowage: "G8-874" },
+        { description: "Trash Bags/Gloves", stowage: "G9-904" }
+    ];
     
-    let generatedLabels = [];
     let currentDate = '';
     
     // Initialize with today's date
@@ -455,13 +364,9 @@
         const dateInput = document.getElementById('labelDate').value;
         const format = document.getElementById('dateFormat').value;
         
-        if (!dateInput) {
-            setToday();
-            return;
-        }
+        if (!dateInput) return;
         
-        const date = new Date(dateInput + 'T00:00:00');
-        let formattedDate = '';
+        const date = new Date(dateInput + 'T12:00:00');
         
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 
                       'July', 'August', 'September', 'October', 'November', 'December'];
@@ -473,161 +378,21 @@
         const year = date.getFullYear();
         
         if (format === 'full') {
-            formattedDate = `${months[month]} ${day}, ${year}`;
+            currentDate = `${months[month]} ${day}, ${year}`;
         } else if (format === 'short') {
-            formattedDate = `${monthsShort[month]} ${day}, ${year}`;
+            currentDate = `${monthsShort[month]} ${day}, ${year}`;
         } else {
-            formattedDate = `${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
+            currentDate = `${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
         }
         
-        currentDate = formattedDate;
-        document.getElementById('datePreview').textContent = formattedDate;
+        document.getElementById('datePreview').textContent = currentDate;
     }
     
-    // Drag and drop
-    const uploadArea = document.getElementById('uploadArea');
+    // Update preview when format changes
+    document.getElementById('dateFormat').addEventListener('change', updateDatePreview);
+    document.getElementById('labelDate').addEventListener('change', updateDatePreview);
     
-    uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('drag-over');
-    });
-    
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('drag-over');
-    });
-    
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file && file.type === 'application/pdf') {
-            processPDF(file);
-        }
-    });
-    
-    function handleFile(event) {
-        const file = event.target.files[0];
-        if (file && file.type === 'application/pdf') {
-            processPDF(file);
-        }
-    }
-    
-    async function processPDF(file) {
-        if (!currentDate) {
-            showError('Please select a date first');
-            return;
-        }
-        
-        try {
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('progressSection').style.display = 'block';
-            
-            updateProgress(10, 'Loading PDF...');
-            
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-            
-            updateProgress(30, `Extracting text from ${pdf.numPages} pages...`);
-            
-            let fullText = '';
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const text = content.items.map(item => item.str).join('\n');
-                fullText += text + '\n';
-                
-                if (i % 5 === 0) {
-                    updateProgress(30 + (i / pdf.numPages * 30), `Processing page ${i}/${pdf.numPages}...`);
-                }
-            }
-            
-            updateProgress(70, 'Parsing cart data...');
-            
-            const carts = parseCartData(fullText);
-            
-            if (carts.length === 0) {
-                throw new Error('No cart data found in PDF');
-            }
-            
-            updateProgress(90, `Generating ${carts.length} ZPL labels...`);
-            
-            generatedLabels = carts.map(cart => ({
-                cart: cart,
-                zpl: generateZPL(cart),
-                filename: `AA092C_${cart.stowage.replace(/\s+/g, '_')}.zpl`
-            }));
-            
-            updateProgress(100, 'Complete!');
-            
-            setTimeout(() => {
-                document.getElementById('progressSection').style.display = 'none';
-                displayResults();
-            }, 500);
-            
-        } catch (error) {
-            showError('Error processing PDF: ' + error.message);
-        }
-    }
-    
-    function parseCartData(text) {
-        const carts = [];
-        const entries = text.split('Report Date');
-        
-        for (let i = 0; i < entries.length - 1; i++) {
-            const entry = entries[i];
-            const lines = entry.split('\n').map(l => l.trim());
-            
-            const cart = {
-                flight: 'AA 092C',
-                date: currentDate,
-                sector: 'PHL-ZRH',
-                aircraft: '788',
-                description: '',
-                stowage: ''
-            };
-            
-            // Find Description
-            for (let j = 0; j < lines.length; j++) {
-                if (lines[j] === 'Description') {
-                    for (let k = j + 1; k < Math.min(j + 5, lines.length); k++) {
-                        const desc = lines[k];
-                        if (desc && 
-                            desc !== 'Aircraft' && 
-                            desc !== 'Loading List' && 
-                            desc !== 'Page' &&
-                            !desc.startsWith('788') &&
-                            desc.length > 3) {
-                            cart.description = desc;
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            
-            // Find Stowage Position
-            for (let j = 0; j < lines.length; j++) {
-                if (lines[j].includes('Stowage Position')) {
-                    for (let k = j + 1; k < Math.min(j + 5, lines.length); k++) {
-                        const match = lines[k].match(/G\d+-\d+\s*[A-Z]?/);
-                        if (match) {
-                            cart.stowage = match[0].trim();
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            
-            if (cart.description && cart.stowage) {
-                carts.push(cart);
-            }
-        }
-        
-        return carts;
-    }
-    
-    function generateZPL(cart) {
+    function generateZPL(cart, date) {
         const desc = cart.description;
         let desc1 = '', desc2 = '';
         
@@ -665,13 +430,13 @@
 ^FO0,0^GB406,110,110^FS
 
 ^CF0,70
-^FO15,20^FD${cart.flight}^FS
+^FO15,20^FDAA 092C^FS
 
 ^CF0,30
-^FO15,130^FD${cart.date}^FS
+^FO15,130^FD${date}^FS
 
 ^CF0,32
-^FO15,175^FD${cart.sector} | ${cart.aircraft}^FS
+^FO15,175^FDPHL-ZRH | 788^FS
 
 ^CF0,30
 ^FO15,230^FD${desc1}^FS
@@ -684,32 +449,22 @@
 }
 
 ```
-    function displayResults() {
-        document.getElementById('resultsSection').style.display = 'block';
-        document.getElementById('labelCount').textContent = generatedLabels.length;
-        document.getElementById('labelDateDisplay').textContent = currentDate;
+    async function generateLabels() {
+        if (!currentDate) {
+            alert('Please select a date first');
+            return;
+        }
         
-        const preview = document.getElementById('labelsPreview');
-        preview.innerHTML = '';
-        
-        generatedLabels.forEach((label, index) => {
-            const item = document.createElement('div');
-            item.className = 'label-item';
-            item.innerHTML = `
-                <div class="label-number">#${index + 1}</div>
-                <div class="label-desc">${label.cart.description}</div>
-                <div class="label-stowage">${label.cart.stowage}</div>
-            `;
-            preview.appendChild(item);
-        });
-    }
-    
-    async function downloadZip() {
         const zip = new JSZip();
-        generatedLabels.forEach(label => {
-            zip.file(label.filename, label.zpl);
+        
+        // Generate ZPL for each cart with the selected date
+        carts.forEach(cart => {
+            const zpl = generateZPL(cart, currentDate);
+            const filename = `AA092C_${cart.stowage.replace(/\s+/g, '_')}.zpl`;
+            zip.file(filename, zpl);
         });
         
+        // Create and download ZIP
         const blob = await zip.generateAsync({type: 'blob'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -719,23 +474,9 @@
         const dateInput = document.getElementById('labelDate').value;
         const dateForFilename = dateInput.replace(/-/g, '');
         
-        a.download = `AA092C_Labels_${dateForFilename}_${generatedLabels.length}.zip`;
+        a.download = `AA092C_Labels_${dateForFilename}.zip`;
         a.click();
         URL.revokeObjectURL(url);
-    }
-    
-    function updateProgress(percent, status) {
-        document.getElementById('progressFill').style.width = percent + '%';
-        document.getElementById('progressFill').textContent = percent + '%';
-        document.getElementById('statusText').textContent = status;
-    }
-    
-    function showError(message) {
-        const errorDiv = document.getElementById('errorMsg');
-        errorDiv.textContent = '❌ ' + message;
-        errorDiv.style.display = 'block';
-        document.getElementById('progressSection').style.display = 'none';
-        document.getElementById('uploadSection').style.display = 'block';
     }
 </script>
 ```
