@@ -1,326 +1,389 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AA 092C Label Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <title>C-Base to Zebra Label Printer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 50px auto;
+            max-width: 1000px;
+            margin: 20px auto;
             padding: 20px;
-            background: #f0f0f0;
+            background: #f5f5f5;
         }
-
-```
-    .card {
-        background: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    h1 {
-        color: #003d7a;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    
-    .date-section {
-        background: #e8f0ff;
-        padding: 30px;
-        border-radius: 8px;
-        margin-bottom: 30px;
-    }
-    
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 10px;
-        font-size: 16px;
-    }
-    
-    input[type="date"] {
-        width: 100%;
-        padding: 12px;
-        font-size: 18px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-    
-    select {
-        width: 100%;
-        padding: 12px;
-        font-size: 18px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-    
-    .btn {
-        display: block;
-        width: 100%;
-        padding: 20px;
-        font-size: 20px;
-        font-weight: bold;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-bottom: 15px;
-    }
-    
-    .btn-today {
-        background: #0066cc;
-    }
-    
-    .btn-today:hover {
-        background: #0052a3;
-    }
-    
-    .btn-generate {
-        background: #00cc66;
-        font-size: 24px;
-    }
-    
-    .btn-generate:hover {
-        background: #00a352;
-    }
-    
-    .preview {
-        background: #fff3cd;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px 0;
-        border-left: 5px solid #ffc107;
-    }
-    
-    .preview-label {
-        font-size: 14px;
-        color: #856404;
-        margin-bottom: 5px;
-    }
-    
-    .preview-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #003d7a;
-    }
-    
-    .info {
-        background: #d4edda;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 5px solid #28a745;
-    }
-    
-    .info h3 {
-        margin-top: 0;
-        color: #155724;
-    }
-    
-    .info ul {
-        margin: 10px 0;
-        padding-left: 20px;
-    }
-    
-    .info li {
-        margin: 5px 0;
-    }
-</style>
-```
-
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #003d7a;
+            margin-bottom: 10px;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #0066cc;
+            font-size: 18px;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        input[type="date"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #0066cc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-success {
+            background: #00cc66;
+        }
+        .btn-success:hover {
+            background: #00a352;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+        .status-success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+        .status-error {
+            background: #ffebee;
+            color: #d32f2f;
+            border-left: 4px solid #d32f2f;
+        }
+        .preview {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .preview strong {
+            color: #856404;
+        }
+        .preview-value {
+            font-size: 20px;
+            color: #003d7a;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        #labelList {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .label-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .label-item:hover {
+            background: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
-    <div class="card">
-        <h1>✈️ AA 092C Label Generator</h1>
+    <div class="container">
+        <h1>✈️ C-Base to Zebra Label Printer</h1>
+        <p>Universal tool for ANY flight - Upload C-Base PDF, set date, download ZPL labels</p>
 
 ```
-    <div class="date-section">
-        <label for="labelDate">Select Flight Date:</label>
-        <input type="date" id="labelDate">
-        
-        <label for="dateFormat">Date Format on Label:</label>
+    <div id="status"></div>
+    
+    <!-- Step 1: Upload PDF -->
+    <div class="section">
+        <h2>Step 1: Upload C-Base PDF</h2>
+        <input type="file" id="pdfFile" accept=".pdf">
+    </div>
+    
+    <!-- Step 2: Set Date -->
+    <div class="section">
+        <h2>Step 2: Set Flight Date</h2>
+        <input type="date" id="flightDate">
         <select id="dateFormat">
-            <option value="full">Full Date (January 10, 2026)</option>
-            <option value="short">Short Date (Jan 10, 2026)</option>
+            <option value="full">Full (January 10, 2026)</option>
+            <option value="short">Short (Jan 10, 2026)</option>
             <option value="numeric">Numeric (01/10/2026)</option>
         </select>
+        <button onclick="setTodayDate()">Use Today</button>
         
-        <button class="btn btn-today" onclick="useTodayDate()">📅 Use Today's Date</button>
+        <div class="preview" id="datePreview" style="display:none;">
+            <strong>Date on labels:</strong>
+            <div class="preview-value" id="datePreviewText"></div>
+        </div>
     </div>
     
-    <div class="preview">
-        <div class="preview-label">Date that will appear on labels:</div>
-        <div class="preview-value" id="datePreview">Click "Use Today's Date" to start</div>
+    <!-- Step 3: Generate -->
+    <div class="section">
+        <h2>Step 3: Generate Labels</h2>
+        <button onclick="processAndDownload()" class="btn-success" style="font-size: 18px; padding: 20px 40px;">
+            🏷️ Generate ZPL Labels
+        </button>
+        
+        <div id="results" style="display:none; margin-top: 20px;">
+            <h3>✅ Generated <span id="labelCount">0</span> labels</h3>
+            <div id="labelList"></div>
+        </div>
     </div>
     
-    <button class="btn btn-generate" onclick="downloadLabels()">
-        🏷️ Generate & Download 54 Labels
-    </button>
-    
-    <div class="info">
-        <h3>📦 What you'll get:</h3>
-        <ul>
-            <li><strong>54 ZPL files</strong> - one for each cart</li>
-            <li><strong>Flight:</strong> AA 092C (PHL → ZRH)</li>
-            <li><strong>Aircraft:</strong> Boeing 788</li>
-            <li><strong>Size:</strong> 2" × 3" labels</li>
-            <li><strong>Format:</strong> Ready to print on Zebra printer</li>
+    <!-- Instructions -->
+    <div class="section" style="background: #e8f5e9; border-left-color: #4caf50;">
+        <h2 style="color: #2e7d32;">📋 How to Print</h2>
+        <ol style="line-height: 1.8;">
+            <li>Download the ZIP file containing all .zpl files</li>
+            <li>Extract the ZIP file</li>
+            <li>Send .zpl files to your Zebra printer using one of these methods:</li>
+        </ol>
+        <ul style="margin-left: 40px; line-height: 1.8;">
+            <li><strong>Windows:</strong> <code>copy /b filename.zpl \\localhost\ZebraPrinter</code></li>
+            <li><strong>Drag & Drop:</strong> Use Zebra Setup Utilities</li>
+            <li><strong>Network:</strong> Send files to printer IP address</li>
         </ul>
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-    const carts = [
-        { description: "CC-Hot Towels/Baskets/Dressing", stowage: "G1-111" },
-        { description: "CC-Menus/Cart Toppers", stowage: "G1-112 F" },
-        { description: "CC-Tea", stowage: "G1-113 F" },
-        { description: "Premium Supply Drawer x2", stowage: "G1-114 F" },
-        { description: "Plastic Cups x4/Hot Cups x2", stowage: "G1-114 R" },
-        { description: "Service Ready Beverage Cart", stowage: "G1-173" },
-        { description: "Service Ready Beverage Cart", stowage: "G1-174" },
-        { description: "DHD Earbuds", stowage: "G3-301" },
-        { description: "DHD Soda", stowage: "G3-311" },
-        { description: "Empty Carrier", stowage: "G3-321 F" },
-        { description: "Empty Carrier", stowage: "G3-321 R" },
-        { description: "CC Predeparture Champ/OJ", stowage: "G3-371 F" },
-        { description: "CC Water Cart", stowage: "G3-371 R" },
-        { description: "Empty Carrier", stowage: "G4-402" },
-        { description: "Empty Carrier", stowage: "G4-403" },
-        { description: "Empty Carrier", stowage: "G4-404" },
-        { description: "Empty Carrier", stowage: "G4-413" },
-        { description: "Empty Carrier", stowage: "G4-414" },
-        { description: "DHD Plates or EMPTY", stowage: "G4-415" },
-        { description: "DHD Plates or EMPTY", stowage: "G4-423" },
-        { description: "YC-DHD Soda", stowage: "G4-424" },
-        { description: "YC-Specialty Bev x2", stowage: "G4-425" },
-        { description: "CC-Downline Alcohol Cart", stowage: "G4-475" },
-        { description: "Empty Carrier", stowage: "G5-501 F" },
-        { description: "Plastic Cups x6", stowage: "G5-502 F" },
-        { description: "Paper Cup Sleeves x6", stowage: "G5-502 R" },
-        { description: "Plastic Cup Sleeves", stowage: "G5-503 F" },
-        { description: "Paper Cup Sleeves", stowage: "G5-503 R" },
-        { description: "YC-Beverage Support", stowage: "G6-671" },
-        { description: "YC-Downline Alcohol", stowage: "G6-672" },
-        { description: "Plastic Cup Sleeves", stowage: "G7-701" },
-        { description: "YC INTL Supply Drawers A/B", stowage: "G7-702" },
-        { description: "Paper Cup Sleeves", stowage: "G7-703" },
-        { description: "YC Midflight Snack or EMPTY", stowage: "G7-704" },
-        { description: "Empty Carrier", stowage: "G7-711" },
-        { description: "YC Midflight Snack or EMPTY", stowage: "G7-714" },
-        { description: "Empty Carrier", stowage: "G7-721" },
-        { description: "YC-Dairy Garnish", stowage: "G7-724" },
-        { description: "YC-Beverage Support", stowage: "G7-773" },
-        { description: "Meal Components", stowage: "G7-771" },
-        { description: "Meal Components", stowage: "G7-772" },
-        { description: "Cart Toppers/Creamer", stowage: "G8-801" },
-        { description: "YC INTL Supply Drawers A/B", stowage: "G8-802" },
-        { description: "Paper Cup Sleeves", stowage: "G8-803" },
-        { description: "Plastic Cup Sleeves", stowage: "G8-804" },
-        { description: "Empty Carrier", stowage: "G8-811" },
-        { description: "Empty Carrier", stowage: "G8-814" },
-        { description: "Empty Carrier", stowage: "G8-821" },
-        { description: "Empty Carrier", stowage: "G8-824" },
-        { description: "Empty Cart Atlas", stowage: "G8-871" },
-        { description: "Empty Cart Atlas", stowage: "G8-872" },
-        { description: "YC-Beverage Support", stowage: "G8-873" },
-        { description: "Meal Components", stowage: "G8-874" },
-        { description: "Trash Bags/Gloves", stowage: "G9-904" }
-    ];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     
-    let currentDateFormatted = '';
+    let parsedCarts = [];
+    let formattedDate = '';
     
-    function useTodayDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        
-        document.getElementById('labelDate').value = year + '-' + month + '-' + day;
-        updatePreview();
+    function showStatus(message, type) {
+        const status = document.getElementById('status');
+        status.style.display = 'block';
+        status.className = 'status-' + type;
+        status.textContent = message;
     }
     
-    function updatePreview() {
-        const dateValue = document.getElementById('labelDate').value;
+    function setTodayDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('flightDate').value = yyyy + '-' + mm + '-' + dd;
+        updateDatePreview();
+    }
+    
+    function updateDatePreview() {
+        const dateVal = document.getElementById('flightDate').value;
         const format = document.getElementById('dateFormat').value;
         
-        if (!dateValue) {
-            alert('Please select a date first!');
+        if (!dateVal) return;
+        
+        const parts = dateVal.split('-');
+        const date = new Date(parts[0], parts[1] - 1, parts[2]);
+        
+        const months = ['January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
+        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun',
+                            'Jul','Aug','Sep','Oct','Nov','Dec'];
+        
+        const m = date.getMonth();
+        const d = date.getDate();
+        const y = date.getFullYear();
+        
+        if (format === 'full') {
+            formattedDate = months[m] + ' ' + d + ', ' + y;
+        } else if (format === 'short') {
+            formattedDate = monthsShort[m] + ' ' + d + ', ' + y;
+        } else {
+            formattedDate = String(m + 1).padStart(2, '0') + '/' + String(d).padStart(2, '0') + '/' + y;
+        }
+        
+        document.getElementById('datePreview').style.display = 'block';
+        document.getElementById('datePreviewText').textContent = formattedDate;
+    }
+    
+    document.getElementById('flightDate').addEventListener('change', updateDatePreview);
+    document.getElementById('dateFormat').addEventListener('change', updateDatePreview);
+    
+    async function processAndDownload() {
+        const fileInput = document.getElementById('pdfFile');
+        const dateInput = document.getElementById('flightDate');
+        
+        if (!fileInput.files[0]) {
+            alert('Please upload a C-Base PDF first');
             return;
         }
         
-        const parts = dateValue.split('-');
-        const year = parseInt(parts[0]);
-        const month = parseInt(parts[1]) - 1;
-        const day = parseInt(parts[2]);
-        
-        const date = new Date(year, month, day);
-        
-        const monthsFull = ['January', 'February', 'March', 'April', 'May', 'June', 
-                           'July', 'August', 'September', 'October', 'November', 'December'];
-        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        
-        if (format === 'full') {
-            currentDateFormatted = monthsFull[month] + ' ' + day + ', ' + year;
-        } else if (format === 'short') {
-            currentDateFormatted = monthsShort[month] + ' ' + day + ', ' + year;
-        } else {
-            const m = String(month + 1).padStart(2, '0');
-            const d = String(day).padStart(2, '0');
-            currentDateFormatted = m + '/' + d + '/' + year;
+        if (!dateInput.value) {
+            alert('Please select a flight date');
+            return;
         }
         
-        document.getElementById('datePreview').textContent = currentDateFormatted;
+        if (!formattedDate) {
+            updateDatePreview();
+        }
+        
+        try {
+            showStatus('Reading PDF...', 'info');
+            
+            const file = fileInput.files[0];
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            
+            showStatus('Extracting cart data from ' + pdf.numPages + ' pages...', 'info');
+            
+            let fullText = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const text = content.items.map(item => item.str).join('\n');
+                fullText += text + '\n';
+            }
+            
+            showStatus('Parsing cart information...', 'info');
+            parsedCarts = extractCarts(fullText);
+            
+            if (parsedCarts.length === 0) {
+                throw new Error('No cart data found in PDF');
+            }
+            
+            showStatus('Generating ' + parsedCarts.length + ' ZPL labels...', 'info');
+            
+            await downloadZipFile(parsedCarts, formattedDate);
+            
+            displayResults(parsedCarts);
+            showStatus('✅ Success! Downloaded ' + parsedCarts.length + ' labels', 'success');
+            
+        } catch (error) {
+            showStatus('❌ Error: ' + error.message, 'error');
+            console.error(error);
+        }
     }
     
-    document.getElementById('labelDate').addEventListener('change', updatePreview);
-    document.getElementById('dateFormat').addEventListener('change', updatePreview);
+    function extractCarts(text) {
+        const carts = [];
+        const entries = text.split('Report Date');
+        
+        for (let entry of entries) {
+            const lines = entry.split('\n').map(l => l.trim());
+            
+            let description = '';
+            let stowage = '';
+            
+            // Find description
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i] === 'Description') {
+                    for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
+                        const desc = lines[j];
+                        if (desc && desc !== 'Aircraft' && desc !== 'Loading List' && 
+                            desc !== 'Page' && !desc.startsWith('788') && desc.length > 3) {
+                            description = desc;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            // Find stowage
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('Stowage Position')) {
+                    for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
+                        const match = lines[j].match(/G\d+-\d+\s*[A-Z]?/);
+                        if (match) {
+                            stowage = match[0].trim();
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            if (description && stowage) {
+                carts.push({description, stowage});
+            }
+        }
+        
+        return carts;
+    }
     
-    function makeZPL(cart, dateText) {
+    function generateZPL(cart, date) {
         const desc = cart.description;
-        let line1 = '';
-        let line2 = '';
+        let line1 = '', line2 = '';
         
         if (desc.length > 26) {
             const words = desc.split(' ');
-            let currentLine = '';
-            
-            for (let i = 0; i < words.length; i++) {
-                const testLine = currentLine + (currentLine ? ' ' : '') + words[i];
-                if (testLine.length <= 26) {
-                    currentLine = testLine;
+            let current = '';
+            for (const word of words) {
+                if ((current + ' ' + word).trim().length <= 26) {
+                    current += (current ? ' ' : '') + word;
                 } else {
                     if (!line1) {
-                        line1 = currentLine;
-                        currentLine = words[i];
+                        line1 = current;
+                        current = word;
                     } else {
-                        line2 = currentLine;
+                        line2 = current;
                         break;
                     }
                 }
             }
-            
-            if (!line2 && currentLine) {
-                line2 = currentLine;
-            }
-            if (!line1) {
-                line1 = desc;
-            }
+            if (!line2) line2 = current;
+            if (!line1) line1 = desc;
         } else {
             line1 = desc;
         }
         
-        const zpl = `^XA
+        return `^XA
 ```
 
 ^CI28
-
 ~SD15
 ^PW406
 ^LL609
@@ -328,13 +391,13 @@
 ^FO0,0^GB406,110,110^FS
 
 ^CF0,70
-^FO15,20^FDAA 092C^FS
+^FO15,20^FDFLIGHT^FS
 
 ^CF0,30
-^FO15,130^FD${dateText}^FS
+^FO15,130^FD${date}^FS
 
 ^CF0,32
-^FO15,175^FDPHL-ZRH | 788^FS
+^FO15,175^FDROUTE | A/C^FS
 
 ^CF0,30
 ^FO15,230^FD${line1}^FS
@@ -344,50 +407,46 @@
 ^FO15,520^FD${cart.stowage}^FS
 
 ^XZ`;
+}
 
 ```
-        return zpl;
-    }
-    
-    async function downloadLabels() {
-        if (!currentDateFormatted) {
-            alert('Please select a date first!');
-            return;
+    async function downloadZipFile(carts, date) {
+        const zip = new JSZip();
+        
+        for (const cart of carts) {
+            const zpl = generateZPL(cart, date);
+            const filename = 'Label_' + cart.stowage.replace(/\s+/g, '_') + '.zpl';
+            zip.file(filename, zpl);
         }
         
-        try {
-            const zip = new JSZip();
-            
-            for (let i = 0; i < carts.length; i++) {
-                const cart = carts[i];
-                const zpl = makeZPL(cart, currentDateFormatted);
-                const filename = 'AA092C_' + cart.stowage.replace(/\s+/g, '_') + '.zpl';
-                zip.file(filename, zpl);
-            }
-            
-            const zipBlob = await zip.generateAsync({type: 'blob'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(zipBlob);
-            
-            const dateValue = document.getElementById('labelDate').value;
-            const dateForFile = dateValue.replace(/-/g, '');
-            
-            link.download = 'AA092C_Labels_' + dateForFile + '.zip';
-            link.click();
-            
-            alert('✅ Success! Downloaded 54 labels for ' + currentDateFormatted);
-            
-        } catch (error) {
-            alert('Error: ' + error.message);
-            console.error(error);
-        }
+        const blob = await zip.generateAsync({type: 'blob'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Flight_Labels_' + carts.length + '.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function displayResults(carts) {
+        document.getElementById('labelCount').textContent = carts.length;
+        document.getElementById('results').style.display = 'block';
+        
+        const list = document.getElementById('labelList');
+        list.innerHTML = '';
+        
+        carts.forEach((cart, i) => {
+            const div = document.createElement('div');
+            div.className = 'label-item';
+            div.innerHTML = '<span>#' + (i + 1) + ': ' + cart.description + '</span><strong>' + cart.stowage + '</strong>';
+            list.appendChild(div);
+        });
     }
     
     // Auto-set today's date on load
-    window.addEventListener('load', function() {
-        useTodayDate();
-    });
+    window.addEventListener('load', setTodayDate);
 </script>
 ```
 
