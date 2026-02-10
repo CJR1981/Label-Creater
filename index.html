@@ -121,12 +121,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 0.9em;
     }
     
     .label-number {
         font-weight: bold;
         color: #667eea;
-        min-width: 40px;
+        min-width: 35px;
     }
     
     .label-desc {
@@ -140,7 +141,7 @@
         padding: 5px 10px;
         border-radius: 15px;
         font-weight: bold;
-        font-size: 0.9em;
+        font-size: 0.85em;
     }
     
     .debug {
@@ -149,10 +150,9 @@
         border-radius: 8px;
         margin-top: 20px;
         font-family: monospace;
-        font-size: 0.9em;
+        font-size: 0.75em;
         max-height: 200px;
         overflow-y: auto;
-        display: none;
     }
 </style>
 ```
@@ -224,8 +224,10 @@
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
-                const text = content.items.map(item => item.str).join('\n');
-                allText += text + '\n\n';
+                
+                // Get text with spaces between items
+                const text = content.items.map(item => item.str).join(' ');
+                allText += text + ' ';
                 
                 if (i % 10 === 0) {
                     log('Processed ' + i + ' pages...');
@@ -233,6 +235,7 @@
             }
             
             log('Total text length: ' + allText.length + ' characters');
+            log('First 500 chars: ' + allText.substring(0, 500));
             
             showStatus('🔍 Parsing cart data...', 'info');
             
@@ -241,8 +244,6 @@
             
             if (carts.length === 0) {
                 showStatus('❌ No cart data found in PDF. Check debug log.', 'error');
-                log('ERROR: No carts found. First 500 chars of text:');
-                log(allText.substring(0, 500));
                 return;
             }
             
@@ -266,60 +267,73 @@
     
     function parseText(text) {
         const carts = [];
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
         
-        log('Total lines: ' + lines.length);
+        // Find all stowage positions using regex
+        const stowageRegex = /(G\d+-\d+(?:\s+[A-Z])?)\s+Stowage\s+Positi?o?n?/gi;
+        let match;
+        const positions = [];
         
-        // Find all "Stowage Position" markers
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i] === 'Stowage Position' || lines[i].includes('Stowage Position')) {
+        while ((match = stowageRegex.exec(text)) !== null) {
+            positions.push({
+                stowage: match[1].trim(),
+                index: match.index
+            });
+        }
+        
+        log('Found ' + positions.length + ' stowage positions');
+        
+        // For each position, find the description before it
+        positions.forEach((pos, idx) => {
+            // Look backwards from stowage position to find description
+            const beforeText = text.substring(Math.max(0, pos.index - 500), pos.index);
+            
+            // Find "Description" marker and get text after it
+            const descMatch = beforeText.match(/Description\s+([^P][^a][^g][^e].{5,100}?)\s+(?:Page|Loading|Aircraft|PAACA|PAASC)/i);
+            
+            if (descMatch) {
+                let description = descMatch[1].trim();
                 
-                // Look for stowage position (G#-###)
-                let stowage = '';
-                for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
-                    const match = lines[j].match(/G\d+-\d+\s*[A-Z]?/);
-                    if (match) {
-                        stowage = match[0].trim();
-                        break;
-                    }
-                }
+                // Clean up description
+                description = description.replace(/\s+/g, ' ');
+                description = description.replace(/^\d+\s*/, ''); // Remove leading numbers
                 
-                if (!stowage) continue;
-                
-                // Look backwards for description
-                let description = '';
-                for (let j = i - 1; j >= Math.max(0, i - 30); j--) {
-                    if (lines[j] === 'Description') {
-                        // Next line after "Description" is the actual description
-                        for (let k = j + 1; k < Math.min(j + 5, lines.length); k++) {
-                            const desc = lines[k];
-                            if (desc && 
-                                desc !== 'Aircraft' && 
-                                desc !== 'Loading List' && 
-                                desc !== 'Page' &&
-                                !desc.startsWith('788') &&
-                                !desc.match(/^\d+$/) &&
-                                desc.length > 3) {
-                                description = desc;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-                
-                if (description && stowage) {
+                if (description.length > 3) {
                     carts.push({
                         flight: 'AA 092C',
                         date: 'January 29, 2026',
                         sector: 'PHL-ZRH',
                         aircraft: '788',
-                        description: description,
-                        stowage: stowage
+                        description: description.substring(0, 60), // Limit length
+                        stowage: pos.stowage
                     });
                     
-                    log('Cart ' + carts.length + ': ' + description + ' -> ' + stowage);
+                    log('Cart ' + carts.length + ': ' + description.substring(0, 30) + '... -> ' + pos.stowage);
                 }
+            }
+        });
+        
+        // If still no carts, try alternative parsing
+        if (carts.length === 0) {
+            log('Trying alternative parsing method...');
+            
+            // Look for pattern: text before "G#-### Stowage"
+            const altRegex = /([A-Z][A-Za-z\s\-\/]{10,80}?)\s+(G\d+-\d+(?:\s+[A-Z])?)\s+Stowage/g;
+            let altMatch;
+            
+            while ((altMatch = altRegex.exec(text)) !== null) {
+                const description = altMatch[1].trim().replace(/\s+/g, ' ');
+                const stowage = altMatch[2].trim();
+                
+                carts.push({
+                    flight: 'AA 092C',
+                    date: 'January 29, 2026',
+                    sector: 'PHL-ZRH',
+                    aircraft: '788',
+                    description: description,
+                    stowage: stowage
+                });
+                
+                log('Alt Cart ' + carts.length + ': ' + description + ' -> ' + stowage);
             }
         }
         
