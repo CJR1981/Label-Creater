@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C-Base to Zebra Labels</title>
+    <title>AA Flight Label Generator - PC Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -16,143 +16,327 @@
 
 ```
     body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
         min-height: 100vh;
-        padding: 20px;
+        padding: 40px;
     }
     
     .container {
-        max-width: 800px;
+        max-width: 1400px;
         margin: 0 auto;
     }
     
-    .card {
+    .header {
         background: white;
-        padding: 30px;
+        padding: 40px;
         border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        margin-bottom: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+        text-align: center;
     }
     
     h1 {
-        color: #333;
-        margin-bottom: 10px;
-        text-align: center;
+        color: #003d7a;
+        font-size: 2.5em;
+        margin-bottom: 15px;
     }
     
     .subtitle {
-        text-align: center;
         color: #666;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+    
+    .info {
+        color: #999;
+        font-size: 0.9em;
+        margin-top: 10px;
+    }
+    
+    .upload-section {
+        background: white;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         margin-bottom: 30px;
     }
     
-    .upload-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        font-size: 1.1em;
-        border-radius: 8px;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 20px;
+    .date-input-section {
+        background: #f8f9ff;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border: 2px solid #0066cc;
     }
     
-    .upload-btn:hover {
-        opacity: 0.9;
+    .date-input-section h3 {
+        color: #003d7a;
+        margin-bottom: 20px;
+        font-size: 1.3em;
+    }
+    
+    .date-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 20px;
+        align-items: end;
+    }
+    
+    .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .input-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+    
+    .input-group input,
+    .input-group select {
+        padding: 12px;
+        font-size: 1.1em;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        transition: border-color 0.3s;
+    }
+    
+    .input-group input:focus,
+    .input-group select:focus {
+        outline: none;
+        border-color: #0066cc;
+    }
+    
+    .btn-today {
+        background: #0066cc;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-today:hover {
+        background: #003d7a;
+    }
+    
+    .date-preview {
+        margin-top: 15px;
+        padding: 15px;
+        background: white;
+        border-radius: 6px;
+        border-left: 4px solid #00cc66;
+    }
+    
+    .date-preview-label {
+        font-size: 0.9em;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .date-preview-value {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #003d7a;
+    }
+    
+    .upload-area {
+        border: 3px dashed #0066cc;
+        border-radius: 12px;
+        padding: 80px;
+        background: #f8f9ff;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .upload-area:hover {
+        background: #e8f0ff;
+        border-color: #003d7a;
+        transform: translateY(-2px);
+    }
+    
+    .upload-area.drag-over {
+        background: #d0e8ff;
+        border-color: #00cc66;
     }
     
     #fileInput {
         display: none;
     }
     
-    .status {
-        padding: 15px;
-        border-radius: 8px;
-        margin: 20px 0;
-        text-align: center;
-        font-weight: bold;
+    .upload-icon {
+        font-size: 5em;
+        margin-bottom: 20px;
     }
     
-    .status.info {
-        background: #e3f2fd;
-        color: #1976d2;
+    .upload-text {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 500;
     }
     
-    .status.success {
-        background: #e8f5e9;
-        color: #388e3c;
+    .upload-hint {
+        color: #666;
+        font-size: 1.1em;
     }
     
-    .status.error {
-        background: #ffebee;
-        color: #d32f2f;
-    }
-    
-    .download-btn {
-        background: #4caf50;
+    .btn {
+        background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
         color: white;
         border: none;
-        padding: 15px 30px;
-        font-size: 1.1em;
+        padding: 18px 45px;
+        font-size: 1.2em;
         border-radius: 8px;
         cursor: pointer;
+        transition: all 0.3s;
+        margin: 15px;
+        font-weight: 600;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,102,204,0.4);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #00cc66 0%, #009944 100%);
+    }
+    
+    .btn-success:hover {
+        box-shadow: 0 8px 20px rgba(0,204,102,0.4);
+    }
+    
+    .progress-section {
+        display: none;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+    }
+    
+    .progress-bar {
         width: 100%;
-        margin-top: 20px;
+        height: 40px;
+        background: #f0f0f0;
+        border-radius: 20px;
+        overflow: hidden;
+        margin: 30px 0;
     }
     
-    .download-btn:disabled {
-        background: #ccc;
-        cursor: not-allowed;
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00cc66 0%, #009944 100%);
+        width: 0%;
+        transition: width 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.1em;
     }
     
-    .label-list {
-        max-height: 400px;
+    .status-text {
+        text-align: center;
+        font-size: 1.2em;
+        color: #333;
+        margin: 20px 0;
+    }
+    
+    .results-section {
+        display: none;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin: 30px 0;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 3em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        font-size: 1em;
+        opacity: 0.9;
+    }
+    
+    .labels-preview {
+        margin-top: 30px;
+        max-height: 600px;
         overflow-y: auto;
-        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
     }
     
     .label-item {
-        padding: 10px;
-        margin: 5px 0;
-        background: #f5f5f5;
-        border-radius: 6px;
-        display: flex;
-        justify-content: space-between;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        display: grid;
+        grid-template-columns: 60px 1fr 150px;
+        gap: 20px;
         align-items: center;
-        font-size: 0.9em;
+        transition: background 0.2s;
+    }
+    
+    .label-item:hover {
+        background: #f8f9ff;
     }
     
     .label-number {
         font-weight: bold;
-        color: #667eea;
-        min-width: 35px;
+        color: #0066cc;
+        font-size: 1.2em;
     }
     
     .label-desc {
-        flex-grow: 1;
-        padding: 0 10px;
+        color: #333;
+        font-size: 1.1em;
     }
     
     .label-stowage {
-        background: #667eea;
+        background: #0066cc;
         color: white;
-        padding: 5px 10px;
-        border-radius: 15px;
+        padding: 10px 20px;
+        border-radius: 25px;
         font-weight: bold;
-        font-size: 0.85em;
+        text-align: center;
+        font-size: 1.1em;
     }
     
-    .debug {
-        background: #f5f5f5;
-        padding: 15px;
+    .error {
+        background: #ff4444;
+        color: white;
+        padding: 20px;
         border-radius: 8px;
-        margin-top: 20px;
-        font-family: monospace;
-        font-size: 0.75em;
-        max-height: 200px;
-        overflow-y: auto;
+        margin: 20px 0;
+        display: none;
+        font-size: 1.1em;
     }
 </style>
 ```
@@ -160,180 +344,283 @@
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <h1>🏷️ AA Label Generator</h1>
-            <p class="subtitle">Upload C-Base PDF to generate Zebra labels</p>
+        <div class="header">
+            <h1>✈️ American Airlines Flight Catering Label Generator</h1>
+            <p class="subtitle">Automatically generate Zebra ZPL labels from C-Base PDF files</p>
+            <p class="info">2" × 3" Direct Thermal Labels | 203 DPI | ZPL Format</p>
+        </div>
 
 ```
-        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-            📄 Select C-Base PDF
-        </button>
+    <div class="upload-section" id="uploadSection">
+        <!-- Date Input Section -->
+        <div class="date-input-section">
+            <h3>📅 Set Label Date</h3>
+            <div class="date-controls">
+                <div class="input-group">
+                    <label for="labelDate">Date:</label>
+                    <input type="date" id="labelDate" onchange="updateDatePreview()">
+                </div>
+                <div class="input-group">
+                    <label for="dateFormat">Format:</label>
+                    <select id="dateFormat" onchange="updateDatePreview()">
+                        <option value="full">Full Date (January 29, 2026)</option>
+                        <option value="short">Short Date (Jan 29, 2026)</option>
+                        <option value="numeric">Numeric (01/29/2026)</option>
+                    </select>
+                </div>
+                <button class="btn-today" onclick="setToday()">📅 Use Today</button>
+            </div>
+            <div class="date-preview">
+                <div class="date-preview-label">Labels will show:</div>
+                <div class="date-preview-value" id="datePreview">January 29, 2026</div>
+            </div>
+        </div>
+        
+        <!-- Upload Section -->
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Drop C-Base PDF here or click to browse</div>
+            <div class="upload-hint">Supports all C-Base loading list PDFs (788, 777, etc.)</div>
+        </div>
         <input type="file" id="fileInput" accept=".pdf" onchange="handleFile(event)">
+    </div>
+    
+    <div class="progress-section" id="progressSection">
+        <h2 style="margin-bottom: 20px;">Processing PDF...</h2>
+        <div class="status-text" id="statusText">Reading PDF file...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+    </div>
+    
+    <div class="results-section" id="resultsSection">
+        <h2 style="margin-bottom: 20px;">✅ Labels Generated Successfully!</h2>
         
-        <div id="status"></div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="labelCount">0</div>
+                <div class="stat-label">Labels Created</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2" × 3"</div>
+                <div class="stat-label">Label Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="flightNum">AA 092C</div>
+                <div class="stat-label">Flight Number</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="labelDateDisplay">-</div>
+                <div class="stat-label">Label Date</div>
+            </div>
+        </div>
         
-        <div id="results" style="display: none;">
-            <h3>Generated Labels (<span id="count">0</span>)</h3>
-            <div id="labelList" class="label-list"></div>
-            <button class="download-btn" id="downloadBtn" onclick="downloadZip()">
+        <div style="text-align: center; margin: 40px 0;">
+            <button class="btn btn-success" onclick="downloadZip()">
                 📦 Download All Labels (ZIP)
+            </button>
+            <button class="btn" onclick="location.reload()">
+                🔄 Process Another PDF
             </button>
         </div>
         
-        <div id="debug" class="debug"></div>
+        <h3 style="margin-top: 40px; margin-bottom: 20px;">Generated Labels:</h3>
+        <div class="labels-preview" id="labelsPreview"></div>
     </div>
+    
+    <div class="error" id="errorMsg"></div>
 </div>
 
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     
-    let labels = [];
+    let generatedLabels = [];
+    let currentDate = '';
     
-    function showStatus(message, type = 'info') {
-        const statusDiv = document.getElementById('status');
-        statusDiv.className = 'status ' + type;
-        statusDiv.textContent = message;
-        statusDiv.style.display = 'block';
+    // Initialize with today's date
+    window.onload = function() {
+        setToday();
+    };
+    
+    function setToday() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        document.getElementById('labelDate').value = `${year}-${month}-${day}`;
+        updateDatePreview();
     }
     
-    function log(message) {
-        const debugDiv = document.getElementById('debug');
-        debugDiv.style.display = 'block';
-        debugDiv.innerHTML += message + '<br>';
-        debugDiv.scrollTop = debugDiv.scrollHeight;
-        console.log(message);
+    function updateDatePreview() {
+        const dateInput = document.getElementById('labelDate').value;
+        const format = document.getElementById('dateFormat').value;
+        
+        if (!dateInput) {
+            setToday();
+            return;
+        }
+        
+        const date = new Date(dateInput + 'T00:00:00');
+        let formattedDate = '';
+        
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        const month = date.getMonth();
+        const day = date.getDate();
+        const year = date.getFullYear();
+        
+        if (format === 'full') {
+            formattedDate = `${months[month]} ${day}, ${year}`;
+        } else if (format === 'short') {
+            formattedDate = `${monthsShort[month]} ${day}, ${year}`;
+        } else {
+            formattedDate = `${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
+        }
+        
+        currentDate = formattedDate;
+        document.getElementById('datePreview').textContent = formattedDate;
     }
     
-    async function handleFile(event) {
+    // Drag and drop
+    const uploadArea = document.getElementById('uploadArea');
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('drag-over');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === 'application/pdf') {
+            processPDF(file);
+        }
+    });
+    
+    function handleFile(event) {
         const file = event.target.files[0];
-        if (!file) return;
+        if (file && file.type === 'application/pdf') {
+            processPDF(file);
+        }
+    }
+    
+    async function processPDF(file) {
+        if (!currentDate) {
+            showError('Please select a date first');
+            return;
+        }
         
         try {
-            showStatus('📖 Reading PDF...', 'info');
-            log('Starting PDF processing...');
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'block';
+            
+            updateProgress(10, 'Loading PDF...');
             
             const arrayBuffer = await file.arrayBuffer();
-            log('File loaded: ' + file.name + ' (' + file.size + ' bytes)');
-            
             const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-            log('PDF opened: ' + pdf.numPages + ' pages');
             
-            showStatus('📝 Extracting text from ' + pdf.numPages + ' pages...', 'info');
+            updateProgress(30, `Extracting text from ${pdf.numPages} pages...`);
             
-            let allText = '';
+            let fullText = '';
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
+                const text = content.items.map(item => item.str).join('\n');
+                fullText += text + '\n';
                 
-                // Get text with spaces between items
-                const text = content.items.map(item => item.str).join(' ');
-                allText += text + ' ';
-                
-                if (i % 10 === 0) {
-                    log('Processed ' + i + ' pages...');
+                if (i % 5 === 0) {
+                    updateProgress(30 + (i / pdf.numPages * 30), `Processing page ${i}/${pdf.numPages}...`);
                 }
             }
             
-            log('Total text length: ' + allText.length + ' characters');
-            log('First 500 chars: ' + allText.substring(0, 500));
+            updateProgress(70, 'Parsing cart data...');
             
-            showStatus('🔍 Parsing cart data...', 'info');
-            
-            const carts = parseText(allText);
-            log('Found ' + carts.length + ' carts');
+            const carts = parseCartData(fullText);
             
             if (carts.length === 0) {
-                showStatus('❌ No cart data found in PDF. Check debug log.', 'error');
-                return;
+                throw new Error('No cart data found in PDF');
             }
             
-            showStatus('✅ Generating ' + carts.length + ' labels...', 'success');
+            updateProgress(90, `Generating ${carts.length} ZPL labels...`);
             
-            labels = carts.map((cart, i) => {
-                const filename = `AA092C_${cart.stowage.replace(/\s+/g, '_')}.zpl`;
-                const zpl = generateZPL(cart);
-                return { cart, zpl, filename };
-            });
+            generatedLabels = carts.map(cart => ({
+                cart: cart,
+                zpl: generateZPL(cart),
+                filename: `AA092C_${cart.stowage.replace(/\s+/g, '_')}.zpl`
+            }));
             
-            displayResults();
-            showStatus('✅ Successfully generated ' + labels.length + ' labels!', 'success');
+            updateProgress(100, 'Complete!');
+            
+            setTimeout(() => {
+                document.getElementById('progressSection').style.display = 'none';
+                displayResults();
+            }, 500);
             
         } catch (error) {
-            showStatus('❌ Error: ' + error.message, 'error');
-            log('ERROR: ' + error.message);
-            console.error(error);
+            showError('Error processing PDF: ' + error.message);
         }
     }
     
-    function parseText(text) {
+    function parseCartData(text) {
         const carts = [];
+        const entries = text.split('Report Date');
         
-        // Find all stowage positions using regex
-        const stowageRegex = /(G\d+-\d+(?:\s+[A-Z])?)\s+Stowage\s+Positi?o?n?/gi;
-        let match;
-        const positions = [];
-        
-        while ((match = stowageRegex.exec(text)) !== null) {
-            positions.push({
-                stowage: match[1].trim(),
-                index: match.index
-            });
-        }
-        
-        log('Found ' + positions.length + ' stowage positions');
-        
-        // For each position, find the description before it
-        positions.forEach((pos, idx) => {
-            // Look backwards from stowage position to find description
-            const beforeText = text.substring(Math.max(0, pos.index - 500), pos.index);
+        for (let i = 0; i < entries.length - 1; i++) {
+            const entry = entries[i];
+            const lines = entry.split('\n').map(l => l.trim());
             
-            // Find "Description" marker and get text after it
-            const descMatch = beforeText.match(/Description\s+([^P][^a][^g][^e].{5,100}?)\s+(?:Page|Loading|Aircraft|PAACA|PAASC)/i);
+            const cart = {
+                flight: 'AA 092C',
+                date: currentDate,
+                sector: 'PHL-ZRH',
+                aircraft: '788',
+                description: '',
+                stowage: ''
+            };
             
-            if (descMatch) {
-                let description = descMatch[1].trim();
-                
-                // Clean up description
-                description = description.replace(/\s+/g, ' ');
-                description = description.replace(/^\d+\s*/, ''); // Remove leading numbers
-                
-                if (description.length > 3) {
-                    carts.push({
-                        flight: 'AA 092C',
-                        date: 'January 29, 2026',
-                        sector: 'PHL-ZRH',
-                        aircraft: '788',
-                        description: description.substring(0, 60), // Limit length
-                        stowage: pos.stowage
-                    });
-                    
-                    log('Cart ' + carts.length + ': ' + description.substring(0, 30) + '... -> ' + pos.stowage);
+            // Find Description
+            for (let j = 0; j < lines.length; j++) {
+                if (lines[j] === 'Description') {
+                    for (let k = j + 1; k < Math.min(j + 5, lines.length); k++) {
+                        const desc = lines[k];
+                        if (desc && 
+                            desc !== 'Aircraft' && 
+                            desc !== 'Loading List' && 
+                            desc !== 'Page' &&
+                            !desc.startsWith('788') &&
+                            desc.length > 3) {
+                            cart.description = desc;
+                            break;
+                        }
+                    }
+                    break;
                 }
             }
-        });
-        
-        // If still no carts, try alternative parsing
-        if (carts.length === 0) {
-            log('Trying alternative parsing method...');
             
-            // Look for pattern: text before "G#-### Stowage"
-            const altRegex = /([A-Z][A-Za-z\s\-\/]{10,80}?)\s+(G\d+-\d+(?:\s+[A-Z])?)\s+Stowage/g;
-            let altMatch;
+            // Find Stowage Position
+            for (let j = 0; j < lines.length; j++) {
+                if (lines[j].includes('Stowage Position')) {
+                    for (let k = j + 1; k < Math.min(j + 5, lines.length); k++) {
+                        const match = lines[k].match(/G\d+-\d+\s*[A-Z]?/);
+                        if (match) {
+                            cart.stowage = match[0].trim();
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
             
-            while ((altMatch = altRegex.exec(text)) !== null) {
-                const description = altMatch[1].trim().replace(/\s+/g, ' ');
-                const stowage = altMatch[2].trim();
-                
-                carts.push({
-                    flight: 'AA 092C',
-                    date: 'January 29, 2026',
-                    sector: 'PHL-ZRH',
-                    aircraft: '788',
-                    description: description,
-                    stowage: stowage
-                });
-                
-                log('Alt Cart ' + carts.length + ': ' + description + ' -> ' + stowage);
+            if (cart.description && cart.stowage) {
+                carts.push(cart);
             }
         }
         
@@ -398,45 +685,57 @@
 
 ```
     function displayResults() {
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('count').textContent = labels.length;
+        document.getElementById('resultsSection').style.display = 'block';
+        document.getElementById('labelCount').textContent = generatedLabels.length;
+        document.getElementById('labelDateDisplay').textContent = currentDate;
         
-        const listDiv = document.getElementById('labelList');
-        listDiv.innerHTML = '';
+        const preview = document.getElementById('labelsPreview');
+        preview.innerHTML = '';
         
-        labels.forEach((label, i) => {
+        generatedLabels.forEach((label, index) => {
             const item = document.createElement('div');
             item.className = 'label-item';
             item.innerHTML = `
-                <span class="label-number">#${i + 1}</span>
-                <span class="label-desc">${label.cart.description}</span>
-                <span class="label-stowage">${label.cart.stowage}</span>
+                <div class="label-number">#${index + 1}</div>
+                <div class="label-desc">${label.cart.description}</div>
+                <div class="label-stowage">${label.cart.stowage}</div>
             `;
-            listDiv.appendChild(item);
+            preview.appendChild(item);
         });
     }
     
     async function downloadZip() {
-        try {
-            showStatus('📦 Creating ZIP file...', 'info');
-            
-            const zip = new JSZip();
-            labels.forEach(label => {
-                zip.file(label.filename, label.zpl);
-            });
-            
-            const blob = await zip.generateAsync({type: 'blob'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'AA092C_Labels_' + labels.length + '.zip';
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showStatus('✅ Downloaded ' + labels.length + ' labels!', 'success');
-        } catch (error) {
-            showStatus('❌ Error creating ZIP: ' + error.message, 'error');
-        }
+        const zip = new JSZip();
+        generatedLabels.forEach(label => {
+            zip.file(label.filename, label.zpl);
+        });
+        
+        const blob = await zip.generateAsync({type: 'blob'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // Format date for filename
+        const dateInput = document.getElementById('labelDate').value;
+        const dateForFilename = dateInput.replace(/-/g, '');
+        
+        a.download = `AA092C_Labels_${dateForFilename}_${generatedLabels.length}.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    
+    function updateProgress(percent, status) {
+        document.getElementById('progressFill').style.width = percent + '%';
+        document.getElementById('progressFill').textContent = percent + '%';
+        document.getElementById('statusText').textContent = status;
+    }
+    
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMsg');
+        errorDiv.textContent = '❌ ' + message;
+        errorDiv.style.display = 'block';
+        document.getElementById('progressSection').style.display = 'none';
+        document.getElementById('uploadSection').style.display = 'block';
     }
 </script>
 ```
