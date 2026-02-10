@@ -3,195 +3,107 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>C-Base to Zebra Label Printer</title>
+    <title>C-Base Label Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 20px auto;
             padding: 20px;
             background: #f5f5f5;
         }
-        .container {
+        .box {
             background: white;
             padding: 30px;
+            margin: 20px 0;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid #0066cc;
         }
-        h1 {
-            color: #003d7a;
-            margin-bottom: 10px;
-        }
-        .section {
-            margin: 30px 0;
-            padding: 20px;
-            background: #f9f9f9;
+        h1 { color: #003d7a; }
+        h2 { color: #0066cc; font-size: 18px; margin-bottom: 15px; }
+        input[type="file"], input[type="date"], select {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
             border-radius: 5px;
-            border-left: 4px solid #0066cc;
-        }
-        .section h2 {
-            margin-top: 0;
-            color: #0066cc;
-            font-size: 18px;
-        }
-        input[type="file"] {
-            display: block;
             margin: 10px 0;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
         }
-        input[type="date"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            width: 250px;
-        }
-        select {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            margin-left: 10px;
-        }
+        input[type="file"] { width: 100%; }
         button {
             padding: 15px 30px;
             font-size: 16px;
             font-weight: bold;
-            color: white;
             background: #0066cc;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin: 10px 5px 10px 0;
         }
-        button:hover {
-            background: #0052a3;
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .btn-success {
+        button:hover { background: #0052a3; }
+        .big-button {
             background: #00cc66;
+            font-size: 20px;
+            padding: 20px 40px;
+            width: 100%;
         }
-        .btn-success:hover {
-            background: #00a352;
-        }
-        #status {
-            margin: 20px 0;
+        .big-button:hover { background: #00a352; }
+        .status {
             padding: 15px;
+            margin: 15px 0;
             border-radius: 5px;
             display: none;
         }
-        .status-info {
-            background: #e3f2fd;
-            color: #1976d2;
-            border-left: 4px solid #1976d2;
-        }
-        .status-success {
-            background: #e8f5e9;
-            color: #388e3c;
-            border-left: 4px solid #388e3c;
-        }
-        .status-error {
-            background: #ffebee;
-            color: #d32f2f;
-            border-left: 4px solid #d32f2f;
-        }
+        .info { background: #e3f2fd; color: #1976d2; }
+        .success { background: #e8f5e9; color: #388e3c; }
+        .error { background: #ffebee; color: #d32f2f; }
         .preview {
             background: #fff3cd;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
-            border-left: 4px solid #ffc107;
-        }
-        .preview strong {
-            color: #856404;
         }
         .preview-value {
-            font-size: 20px;
-            color: #003d7a;
+            font-size: 24px;
             font-weight: bold;
+            color: #003d7a;
             margin-top: 5px;
-        }
-        #labelList {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 15px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .label-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-        .label-item:hover {
-            background: #f5f5f5;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✈️ C-Base to Zebra Label Printer</h1>
-        <p>Universal tool for ANY flight - Upload C-Base PDF, set date, download ZPL labels</p>
+    <h1>✈️ Flight Label Generator</h1>
+    <p>Upload C-Base PDF, set date, download labels for Zebra printer</p>
 
 ```
-    <div id="status"></div>
+<div id="statusBox" class="status"></div>
+
+<div class="box">
+    <h2>Step 1: Upload C-Base PDF</h2>
+    <input type="file" id="pdfInput" accept=".pdf">
+</div>
+
+<div class="box">
+    <h2>Step 2: Set Flight Date</h2>
+    <input type="date" id="dateInput">
+    <select id="formatSelect">
+        <option value="full">Full (January 10, 2026)</option>
+        <option value="short">Short (Jan 10, 2026)</option>
+        <option value="numeric">Numeric (01/10/2026)</option>
+    </select>
+    <button id="todayBtn">Use Today</button>
     
-    <!-- Step 1: Upload PDF -->
-    <div class="section">
-        <h2>Step 1: Upload C-Base PDF</h2>
-        <input type="file" id="pdfFile" accept=".pdf">
+    <div class="preview" id="previewBox" style="display:none;">
+        <strong>Date on labels:</strong>
+        <div class="preview-value" id="previewText"></div>
     </div>
-    
-    <!-- Step 2: Set Date -->
-    <div class="section">
-        <h2>Step 2: Set Flight Date</h2>
-        <input type="date" id="flightDate">
-        <select id="dateFormat">
-            <option value="full">Full (January 10, 2026)</option>
-            <option value="short">Short (Jan 10, 2026)</option>
-            <option value="numeric">Numeric (01/10/2026)</option>
-        </select>
-        <button onclick="setTodayDate()">Use Today</button>
-        
-        <div class="preview" id="datePreview" style="display:none;">
-            <strong>Date on labels:</strong>
-            <div class="preview-value" id="datePreviewText"></div>
-        </div>
-    </div>
-    
-    <!-- Step 3: Generate -->
-    <div class="section">
-        <h2>Step 3: Generate Labels</h2>
-        <button onclick="processAndDownload()" class="btn-success" style="font-size: 18px; padding: 20px 40px;">
-            🏷️ Generate ZPL Labels
-        </button>
-        
-        <div id="results" style="display:none; margin-top: 20px;">
-            <h3>✅ Generated <span id="labelCount">0</span> labels</h3>
-            <div id="labelList"></div>
-        </div>
-    </div>
-    
-    <!-- Instructions -->
-    <div class="section" style="background: #e8f5e9; border-left-color: #4caf50;">
-        <h2 style="color: #2e7d32;">📋 How to Print</h2>
-        <ol style="line-height: 1.8;">
-            <li>Download the ZIP file containing all .zpl files</li>
-            <li>Extract the ZIP file</li>
-            <li>Send .zpl files to your Zebra printer using one of these methods:</li>
-        </ol>
-        <ul style="margin-left: 40px; line-height: 1.8;">
-            <li><strong>Windows:</strong> <code>copy /b filename.zpl \\localhost\ZebraPrinter</code></li>
-            <li><strong>Drag & Drop:</strong> Use Zebra Setup Utilities</li>
-            <li><strong>Network:</strong> Send files to printer IP address</li>
-        </ul>
+</div>
+
+<div class="box">
+    <h2>Step 3: Generate Labels</h2>
+    <button id="generateBtn" class="big-button">🏷️ Generate & Download Labels</button>
+    <div id="resultBox" style="display:none; margin-top:20px;">
+        <strong>✅ Generated <span id="countText">0</span> labels</strong>
     </div>
 </div>
 
@@ -200,253 +112,221 @@
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     
-    let parsedCarts = [];
-    let formattedDate = '';
+    let labelDate = '';
     
-    function showStatus(message, type) {
-        const status = document.getElementById('status');
-        status.style.display = 'block';
-        status.className = 'status-' + type;
-        status.textContent = message;
+    function showStatus(msg, type) {
+        const box = document.getElementById('statusBox');
+        box.textContent = msg;
+        box.className = 'status ' + type;
+        box.style.display = 'block';
     }
     
-    function setTodayDate() {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        document.getElementById('flightDate').value = yyyy + '-' + mm + '-' + dd;
-        updateDatePreview();
-    }
+    document.getElementById('todayBtn').onclick = function() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        document.getElementById('dateInput').value = y + '-' + m + '-' + d;
+        updatePreview();
+    };
     
-    function updateDatePreview() {
-        const dateVal = document.getElementById('flightDate').value;
-        const format = document.getElementById('dateFormat').value;
+    function updatePreview() {
+        const val = document.getElementById('dateInput').value;
+        const fmt = document.getElementById('formatSelect').value;
         
-        if (!dateVal) return;
+        if (!val) return;
         
-        const parts = dateVal.split('-');
-        const date = new Date(parts[0], parts[1] - 1, parts[2]);
+        const p = val.split('-');
+        const dt = new Date(p[0], p[1]-1, p[2]);
         
-        const months = ['January','February','March','April','May','June',
-                       'July','August','September','October','November','December'];
-        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun',
-                            'Jul','Aug','Sep','Oct','Nov','Dec'];
+        const mf = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const ms = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         
-        const m = date.getMonth();
-        const d = date.getDate();
-        const y = date.getFullYear();
+        const mo = dt.getMonth();
+        const da = dt.getDate();
+        const yr = dt.getFullYear();
         
-        if (format === 'full') {
-            formattedDate = months[m] + ' ' + d + ', ' + y;
-        } else if (format === 'short') {
-            formattedDate = monthsShort[m] + ' ' + d + ', ' + y;
+        if (fmt === 'full') {
+            labelDate = mf[mo] + ' ' + da + ', ' + yr;
+        } else if (fmt === 'short') {
+            labelDate = ms[mo] + ' ' + da + ', ' + yr;
         } else {
-            formattedDate = String(m + 1).padStart(2, '0') + '/' + String(d).padStart(2, '0') + '/' + y;
+            labelDate = String(mo+1).padStart(2,'0') + '/' + String(da).padStart(2,'0') + '/' + yr;
         }
         
-        document.getElementById('datePreview').style.display = 'block';
-        document.getElementById('datePreviewText').textContent = formattedDate;
+        document.getElementById('previewBox').style.display = 'block';
+        document.getElementById('previewText').textContent = labelDate;
     }
     
-    document.getElementById('flightDate').addEventListener('change', updateDatePreview);
-    document.getElementById('dateFormat').addEventListener('change', updateDatePreview);
+    document.getElementById('dateInput').onchange = updatePreview;
+    document.getElementById('formatSelect').onchange = updatePreview;
     
-    async function processAndDownload() {
-        const fileInput = document.getElementById('pdfFile');
-        const dateInput = document.getElementById('flightDate');
+    document.getElementById('generateBtn').onclick = async function() {
+        const fileEl = document.getElementById('pdfInput');
+        const dateEl = document.getElementById('dateInput');
         
-        if (!fileInput.files[0]) {
-            alert('Please upload a C-Base PDF first');
+        if (!fileEl.files[0]) {
+            alert('Please upload a PDF file first');
             return;
         }
         
-        if (!dateInput.value) {
-            alert('Please select a flight date');
+        if (!dateEl.value) {
+            alert('Please select a date');
             return;
         }
         
-        if (!formattedDate) {
-            updateDatePreview();
-        }
+        if (!labelDate) updatePreview();
         
         try {
             showStatus('Reading PDF...', 'info');
             
-            const file = fileInput.files[0];
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            const file = fileEl.files[0];
+            const buf = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data: buf}).promise;
             
-            showStatus('Extracting cart data from ' + pdf.numPages + ' pages...', 'info');
+            showStatus('Extracting text from ' + pdf.numPages + ' pages...', 'info');
             
-            let fullText = '';
+            let txt = '';
             for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const text = content.items.map(item => item.str).join('\n');
-                fullText += text + '\n';
+                const pg = await pdf.getPage(i);
+                const con = await pg.getTextContent();
+                const t = con.items.map(function(x) { return x.str; }).join('\n');
+                txt += t + '\n';
             }
             
-            showStatus('Parsing cart information...', 'info');
-            parsedCarts = extractCarts(fullText);
+            showStatus('Finding cart data...', 'info');
             
-            if (parsedCarts.length === 0) {
+            const carts = [];
+            const parts = txt.split('Report Date');
+            
+            for (let k = 0; k < parts.length - 1; k++) {
+                const lines = parts[k].split('\n').map(function(s) { return s.trim(); });
+                
+                let desc = '';
+                let stow = '';
+                
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i] === 'Description') {
+                        for (let j = i + 1; j < i + 5 && j < lines.length; j++) {
+                            const d = lines[j];
+                            if (d && d !== 'Aircraft' && d !== 'Loading List' && d !== 'Page' && 
+                                !d.startsWith('788') && d.length > 3) {
+                                desc = d;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (lines[i].indexOf('Stowage Position') >= 0) {
+                        for (let j = i + 1; j < i + 5 && j < lines.length; j++) {
+                            const m = lines[j].match(/G\d+-\d+\s*[A-Z]?/);
+                            if (m) {
+                                stow = m[0].trim();
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (desc && stow) {
+                    carts.push({desc: desc, stow: stow});
+                }
+            }
+            
+            if (carts.length === 0) {
                 throw new Error('No cart data found in PDF');
             }
             
-            showStatus('Generating ' + parsedCarts.length + ' ZPL labels...', 'info');
+            showStatus('Creating ' + carts.length + ' label files...', 'info');
             
-            await downloadZipFile(parsedCarts, formattedDate);
+            const zip = new JSZip();
             
-            displayResults(parsedCarts);
-            showStatus('✅ Success! Downloaded ' + parsedCarts.length + ' labels', 'success');
+            for (let i = 0; i < carts.length; i++) {
+                const c = carts[i];
+                const zpl = makeZPL(c.desc, c.stow, labelDate);
+                const fn = 'Label_' + c.stow.replace(/\s+/g, '_') + '.zpl';
+                zip.file(fn, zpl);
+            }
             
-        } catch (error) {
-            showStatus('❌ Error: ' + error.message, 'error');
-            console.error(error);
+            const blob = await zip.generateAsync({type: 'blob'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Flight_Labels_' + carts.length + '.zip';
+            a.click();
+            
+            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('countText').textContent = carts.length;
+            showStatus('✅ Downloaded ' + carts.length + ' labels successfully!', 'success');
+            
+        } catch (err) {
+            showStatus('❌ Error: ' + err.message, 'error');
+            console.error(err);
         }
-    }
+    };
     
-    function extractCarts(text) {
-        const carts = [];
-        const entries = text.split('Report Date');
+    function makeZPL(description, stowage, date) {
+        let l1 = '';
+        let l2 = '';
         
-        for (let entry of entries) {
-            const lines = entry.split('\n').map(l => l.trim());
-            
-            let description = '';
-            let stowage = '';
-            
-            // Find description
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i] === 'Description') {
-                    for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
-                        const desc = lines[j];
-                        if (desc && desc !== 'Aircraft' && desc !== 'Loading List' && 
-                            desc !== 'Page' && !desc.startsWith('788') && desc.length > 3) {
-                            description = desc;
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            
-            // Find stowage
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i].includes('Stowage Position')) {
-                    for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
-                        const match = lines[j].match(/G\d+-\d+\s*[A-Z]?/);
-                        if (match) {
-                            stowage = match[0].trim();
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            
-            if (description && stowage) {
-                carts.push({description, stowage});
-            }
-        }
-        
-        return carts;
-    }
-    
-    function generateZPL(cart, date) {
-        const desc = cart.description;
-        let line1 = '', line2 = '';
-        
-        if (desc.length > 26) {
-            const words = desc.split(' ');
-            let current = '';
-            for (const word of words) {
-                if ((current + ' ' + word).trim().length <= 26) {
-                    current += (current ? ' ' : '') + word;
+        if (description.length > 26) {
+            const words = description.split(' ');
+            let cur = '';
+            for (let i = 0; i < words.length; i++) {
+                const test = cur + (cur ? ' ' : '') + words[i];
+                if (test.length <= 26) {
+                    cur = test;
                 } else {
-                    if (!line1) {
-                        line1 = current;
-                        current = word;
+                    if (!l1) {
+                        l1 = cur;
+                        cur = words[i];
                     } else {
-                        line2 = current;
+                        l2 = cur;
                         break;
                     }
                 }
             }
-            if (!line2) line2 = current;
-            if (!line1) line1 = desc;
+            if (!l2) l2 = cur;
+            if (!l1) l1 = description;
         } else {
-            line1 = desc;
+            l1 = description;
         }
         
-        return `^XA
-```
-
-^CI28
-~SD15
-^PW406
-^LL609
-
-^FO0,0^GB406,110,110^FS
-
-^CF0,70
-^FO15,20^FDFLIGHT^FS
-
-^CF0,30
-^FO15,130^FD${date}^FS
-
-^CF0,32
-^FO15,175^FDROUTE | A/C^FS
-
-^CF0,30
-^FO15,230^FD${line1}^FS
-^FO15,270^FD${line2}^FS
-
-^CF0,65
-^FO15,520^FD${cart.stowage}^FS
-
-^XZ`;
-}
-
-```
-    async function downloadZipFile(carts, date) {
-        const zip = new JSZip();
-        
-        for (const cart of carts) {
-            const zpl = generateZPL(cart, date);
-            const filename = 'Label_' + cart.stowage.replace(/\s+/g, '_') + '.zpl';
-            zip.file(filename, zpl);
-        }
-        
-        const blob = await zip.generateAsync({type: 'blob'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Flight_Labels_' + carts.length + '.zip';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        return '^XA\n' +
+            '^CI28\n' +
+            '~SD15\n' +
+            '^PW406\n' +
+            '^LL609\n' +
+            '\n' +
+            '^FO0,0^GB406,110,110^FS\n' +
+            '\n' +
+            '^CF0,70\n' +
+            '^FO15,20^FDFLIGHT^FS\n' +
+            '\n' +
+            '^CF0,30\n' +
+            '^FO15,130^FD' + date + '^FS\n' +
+            '\n' +
+            '^CF0,32\n' +
+            '^FO15,175^FDROUTE | A/C^FS\n' +
+            '\n' +
+            '^CF0,30\n' +
+            '^FO15,230^FD' + l1 + '^FS\n' +
+            '^FO15,270^FD' + l2 + '^FS\n' +
+            '\n' +
+            '^CF0,65\n' +
+            '^FO15,520^FD' + stowage + '^FS\n' +
+            '\n' +
+            '^XZ';
     }
     
-    function displayResults(carts) {
-        document.getElementById('labelCount').textContent = carts.length;
-        document.getElementById('results').style.display = 'block';
-        
-        const list = document.getElementById('labelList');
-        list.innerHTML = '';
-        
-        carts.forEach((cart, i) => {
-            const div = document.createElement('div');
-            div.className = 'label-item';
-            div.innerHTML = '<span>#' + (i + 1) + ': ' + cart.description + '</span><strong>' + cart.stowage + '</strong>';
-            list.appendChild(div);
-        });
-    }
-    
-    // Auto-set today's date on load
-    window.addEventListener('load', setTodayDate);
+    window.onload = function() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        document.getElementById('dateInput').value = y + '-' + m + '-' + d;
+        updatePreview();
+    };
 </script>
 ```
 
